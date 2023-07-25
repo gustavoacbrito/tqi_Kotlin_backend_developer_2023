@@ -14,7 +14,7 @@ data class Sale(
     var paymentOptionEnum: PaymentOptionEnum,
 
     @OneToOne(cascade = [CascadeType.ALL])
-    var cart: Cart? = null,
+    var cart: Cart,
 
     @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()

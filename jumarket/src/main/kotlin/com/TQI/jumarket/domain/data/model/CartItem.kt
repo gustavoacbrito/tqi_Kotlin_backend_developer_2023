@@ -4,9 +4,21 @@ import jakarta.persistence.*
 
 @Entity(name = "TB_CART_ITEM")
 data class CartItem(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long,
-    @ManyToOne val product: Product,
-    @Column(nullable = false) var quantity: Int,
-    @Column(nullable = false) val totalItemsCost: Double
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long,
+
+    @ManyToOne
+    val product: Product,
+
+    @Column(nullable = false)
+    var quantity: Int,
+
+    @Column(nullable = false)
+    val totalItemsCost: Double,
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    val cart: Cart? = null
 )
 
