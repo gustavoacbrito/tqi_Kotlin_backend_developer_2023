@@ -1,6 +1,6 @@
-package com.TQI.jumarket.data.repositories.interfaces
+package com.TQI.jumarket.domain.data.repositories
 
-import com.TQI.jumarket.data.models.Cart
+import com.TQI.jumarket.domain.data.model.Cart
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
