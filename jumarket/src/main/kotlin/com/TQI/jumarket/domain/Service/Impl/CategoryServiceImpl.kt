@@ -6,13 +6,14 @@ import com.TQI.jumarket.domain.data.repositories.CategoryRepository
 import com.TQI.jumarket.domain.exceptions.BusinessRulesException
 import com.TQI.jumarket.domain.exceptions.EntityNotFoundException
 import com.TQI.jumarket.domain.exceptions.ErrorMessages
+import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class RegisterCategoryServiceImpl(private val categoryRepository: CategoryRepository) : CategoryService {
+class CategoryServiceImpl(private val categoryRepository: CategoryRepository) : CategoryService {
     override fun listCategoryByName(categoryName: String): List<Category> {
-        return categoryRepository.findByCategoryNameIgnoreCase(categoryName)
+        return categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName)
     }
 
     override fun findAll(): List<Category> {
@@ -24,7 +25,7 @@ class RegisterCategoryServiceImpl(private val categoryRepository: CategoryReposi
         return category.orElseThrow { EntityNotFoundException(ErrorMessages.RECORD_NOT_FOUND) }
     }
 
-    override fun create(model: Category): Category {
+    override fun create(@Valid model: Category): Category {
         if (categoryRepository.existsCategoryByCategoryName(model.categoryName)) {
             throw BusinessRulesException(ErrorMessages.CATEGORY_ALREADY_EXISTS)
         } else if (categoryRepository.existsById(model.id)) {
@@ -34,7 +35,7 @@ class RegisterCategoryServiceImpl(private val categoryRepository: CategoryReposi
     }
 
     override fun update(id: Long, model: Category): Category {
-        if (model.id != id || !categoryRepository.findById(id).isPresent) {
+        if (!categoryRepository.findById(id).isPresent) {
             throw IllegalArgumentException(ErrorMessages.CANNOT_UPDATE_CATEGORY)
         }
         val dbCategory = this.findById(id)

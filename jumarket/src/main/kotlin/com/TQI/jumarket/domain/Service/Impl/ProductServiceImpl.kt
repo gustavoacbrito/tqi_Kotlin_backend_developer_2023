@@ -6,9 +6,10 @@ import com.TQI.jumarket.domain.Service.ProductService
 import com.TQI.jumarket.domain.exceptions.BusinessRulesException
 import com.TQI.jumarket.domain.exceptions.EntityNotFoundException
 import com.TQI.jumarket.domain.exceptions.ErrorMessages
+import org.springframework.stereotype.Service
 import java.util.*
-
-class RegisterProductServiceImpl(private val productRepository: ProductRepository) : ProductService {
+@Service
+class ProductServiceImpl(private val productRepository: ProductRepository) : ProductService {
     override fun findAll(): List<Product> {
         return productRepository.findAll()
     }
@@ -19,7 +20,7 @@ class RegisterProductServiceImpl(private val productRepository: ProductRepositor
     }
 
     override fun create(model: Product): Product {
-        if (productRepository.existsByProductName(model.name)) {
+        if (productRepository.existsByName(model.name)) {
             throw BusinessRulesException(ErrorMessages.PRODUCT_ALREADY_EXISTS)
         } else if (productRepository.existsById(model.id)) {
             throw BusinessRulesException(ErrorMessages.ID_ALREADY_EXISTS)
@@ -28,12 +29,16 @@ class RegisterProductServiceImpl(private val productRepository: ProductRepositor
     }
 
     override fun update(id: Long, model: Product): Product {
-        if (model.id != id || !productRepository.findById(id).isPresent) {
+        if (!productRepository.findById(id).isPresent) {
             throw IllegalArgumentException(ErrorMessages.CANNOT_UPDATE_PRODUCT)
         }
         val dbProduct = this.findById(id)
 
         dbProduct.name = model.name
+        dbProduct.category = model.category
+        dbProduct.price = model.price
+        dbProduct.unit = model.unit
+        dbProduct.description = model.description
 
         return productRepository.save(dbProduct)
     }
@@ -46,7 +51,7 @@ class RegisterProductServiceImpl(private val productRepository: ProductRepositor
         }
     }
     override fun listProductByName(productName: String): List<Product> {
-        val products = productRepository.findByProductNameContainingIgnoreCase(productName)
+        val products = productRepository.findByNameContainingIgnoreCase(productName)
         if (products.isEmpty()) {
             throw EntityNotFoundException(ErrorMessages.RECORD_NOT_FOUND)
         }

@@ -6,7 +6,7 @@ import jakarta.persistence.*
 data class CartItem(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @ManyToOne
     val product: Product,
@@ -15,10 +15,9 @@ data class CartItem(
     var quantity: Int,
 
     @Column(nullable = false)
-    val totalItemsCost: Double,
+    var totalItemsCost: Double,
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    val cart: Cart? = null
+    var cart: Cart? = null
 )
 

@@ -6,13 +6,10 @@ import jakarta.persistence.*
 data class Cart(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-
-    @OneToOne
-    var sale: Sale,
+    var id: Long,
 
     @Column(nullable = false)
-    var totalSalePrice: Double,
+    var totalSalePrice: Double? = null,
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE, CascadeType.PERSIST], mappedBy = "cart")
     var items: MutableList<CartItem> = mutableListOf(),

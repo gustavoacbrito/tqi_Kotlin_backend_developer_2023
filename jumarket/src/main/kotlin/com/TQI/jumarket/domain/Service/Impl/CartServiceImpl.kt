@@ -3,6 +3,7 @@ package com.TQI.jumarket.domain.Service.Impl
 import com.TQI.jumarket.domain.data.model.Cart
 import com.TQI.jumarket.domain.data.repositories.CartRepository
 import com.TQI.jumarket.domain.Service.CartService
+import com.TQI.jumarket.domain.data.model.CartItem
 import com.TQI.jumarket.domain.data.repositories.CartItemRepository
 import com.TQI.jumarket.domain.data.repositories.ProductRepository
 import com.TQI.jumarket.domain.exceptions.EntityNotFoundException
@@ -45,7 +46,6 @@ class CartServiceImpl(
         val dbCart = this.findById(id)
 
         dbCart.items = model.items
-        dbCart.sale = model.sale
         dbCart.totalSalePrice = model.totalSalePrice
 
         return cartRepository.save(dbCart)
@@ -57,29 +57,34 @@ class CartServiceImpl(
         return cartRepository.delete(dbCart)
     }
 
-    override fun addItem(cartId: Long, cartItemId: Long): Cart {
+    override fun addItemToCart(cartId: Long,cartItem: CartItem): Cart {
         val cart = cartRepository.findById(cartId).orElseThrow { NoSuchElementException("Cart not found with id: $cartId") }
-        val cartItem = cartItemRepository.findById(cartItemId).orElseThrow { NoSuchElementException("CartItem not found with id: $cartItemId") }
-
         val existingItem = cart.items.find { it.product.id == cartItem.product.id }
         if (existingItem != null){
             existingItem.quantity += cartItem.quantity
         } else {
             cart.items.add(cartItem)
         }
-
+        cartItem.totalItemsCost = cartItem.quantity * getProductPrice(cartItem.product.id)
         cart.totalSalePrice = handleTotalPrice(cart)
+        cartItem.cart?.id = cartId
+        cartItemRepository.save(cartItem)
 
-        return cartRepository.save(cart)
-    }
+        return this.update(cartId,cart)
 
-    override fun deleteItem(cartId: Long, productId: Long) {
+}
+
+    override fun removeItem(cartId: Long, productId: Long) : Cart{
         val cart = cartRepository.findById(cartId).orElseThrow { NoSuchElementException("Cart not found with id: $cartId") }
 
         cart.items.removeIf { it.product.id == productId }
         cart.totalSalePrice = handleTotalPrice(cart)
+        val cartItem = cartItemRepository.findByProductId(productId)
+        for (item in cartItem){
+            cartItemRepository.delete(item)
+        }
+        return cartRepository.save(cart)
 
-        cartRepository.save(cart)
     }
 
     override fun handleTotalPrice(cart: Cart): Double {
@@ -90,7 +95,8 @@ class CartServiceImpl(
     }
 
     private fun getProductPrice(productId: Long): Double {
-        return productRepository.getProductPrice(productId)
+        val price = productRepository.findPriceById(productId)
+        return price
     }
 
 }
