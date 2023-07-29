@@ -3,14 +3,13 @@ package com.TQI.jumarket.controller
 import com.TQI.jumarket.domain.Service.CartService
 import com.TQI.jumarket.domain.data.dto.CartDto
 import com.TQI.jumarket.domain.data.dto.CartItemDto
+import com.TQI.jumarket.domain.data.dto.response.CartViewDto
 import com.TQI.jumarket.domain.data.model.Cart
-import com.TQI.jumarket.domain.data.model.CartItem
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -25,9 +24,9 @@ class CartController(private val cartService: CartService){
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "Operation sucessful")
     ])
-    fun findAll(): ResponseEntity<List<CartDto>> {
+    fun findAll(): ResponseEntity<List<CartViewDto>> {
         val cart = cartService.findAll()
-        val cartDto = cart.map { CartDto(it) }
+        val cartDto = cart.map { CartViewDto(it) }
 
         return ResponseEntity.status(HttpStatus.OK).body(cartDto)
     }
@@ -38,9 +37,9 @@ class CartController(private val cartService: CartService){
         ApiResponse(responseCode = "200", description = "Operation sucessful"),
         ApiResponse(responseCode = "400", description = "Cart not found")
     ])
-    fun findById(@PathVariable id:Long): ResponseEntity<CartDto> {
+    fun findById(@PathVariable id:Long): ResponseEntity<CartViewDto> {
         val cart = cartService.findById(id)
-        return ResponseEntity.ok(CartDto(cart))
+        return ResponseEntity.ok(CartViewDto(cart))
     }
 
     @PostMapping
@@ -66,9 +65,9 @@ class CartController(private val cartService: CartService){
         ApiResponse(responseCode = "404", description = "Cart not found"),
         ApiResponse(responseCode = "422", description = "Invalid cart data provided")
     ])
-    fun update(@PathVariable id: Long, @RequestBody cartDTO: CartDto): ResponseEntity<CartDto> {
+    fun update(@PathVariable id: Long, @RequestBody cartDTO: CartDto): ResponseEntity<CartViewDto> {
         val cart = cartService.update(id, cartDTO.toEntity())
-        return ResponseEntity.ok(CartDto(cart))
+        return ResponseEntity.ok(CartViewDto(cart))
     }
 
     @DeleteMapping("/{id}")
@@ -88,20 +87,20 @@ class CartController(private val cartService: CartService){
         ApiResponse(responseCode = "200", description = "Product added to the cart"),
         ApiResponse(responseCode = "404", description = "Product not added")
     ])
-    fun addItemToCart(@PathVariable cartId: Long, @RequestBody cartItemDto: CartItemDto): ResponseEntity<Cart> {
+    fun addItemToCart(@RequestBody cartItemDto: CartItemDto): ResponseEntity<CartViewDto> {
         val cartItem = cartItemDto.toEntity()
-        return ResponseEntity.ok(cartService.addItemToCart(cartId,cartItem))
+        return ResponseEntity.ok(CartViewDto(cartService.addItemToCart(cartItem)))
 
     }
 
-    @PostMapping("/{cartId}/product/{productId}")
-    @Operation(summary = "Remove to a cart", description = "Remove a product to the cart")
+    @PatchMapping("/{cartId}/product/{productId}")
+    @Operation(summary = "Remove from cart", description = "Remove a product from the cart")
     @ApiResponses(value = [
         ApiResponse(responseCode = "204", description = "Product removed to the cart"),
         ApiResponse(responseCode = "404", description = "Product not added")
     ])
-    fun removeItem(@PathVariable cartId: Long, @PathVariable productId: Long): ResponseEntity<CartDto> {
-        val cart = cartService.removeItem(cartId,productId)
-        return ResponseEntity.ok(CartDto(cart))
+    fun removeItem(@PathVariable cartId: Long, @PathVariable productId: Long, @RequestParam quantity: Int): ResponseEntity<CartViewDto> {
+        val cart = cartService.removeItem(cartId, productId, quantity)
+        return ResponseEntity.ok(CartViewDto(cart))
     }
 }

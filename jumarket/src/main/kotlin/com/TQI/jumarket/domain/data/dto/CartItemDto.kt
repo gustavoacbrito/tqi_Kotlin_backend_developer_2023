@@ -14,7 +14,7 @@ data class CartItemDto(
     @field:NotBlank(message = "Invalid Input")
     var quantity: Int,
 
-   @field:NotBlank(message = "Invalid Input")
+    @field:NotBlank(message = "Invalid Input")
     var totalItemsCost: Double,
 
     @field:NotNull(message = "Invalid Input")

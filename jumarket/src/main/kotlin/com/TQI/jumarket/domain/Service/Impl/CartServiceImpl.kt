@@ -57,34 +57,34 @@ class CartServiceImpl(
         return cartRepository.delete(dbCart)
     }
 
-    override fun addItemToCart(cartId: Long,cartItem: CartItem): Cart {
-        val cart = cartRepository.findById(cartId).orElseThrow { NoSuchElementException("Cart not found with id: $cartId") }
+    override fun addItemToCart(cartItem: CartItem): Cart {
+        val cart = cartRepository.findById(cartItem.cart.id).orElseThrow { NoSuchElementException("Cart not found with id: $cartItem.cart.id") }
         val existingItem = cart.items.find { it.product.id == cartItem.product.id }
         if (existingItem != null){
+            val cartItemId = existingItem.id
             existingItem.quantity += cartItem.quantity
+            existingItem.totalItemsCost += (cartItem.quantity * getProductPrice(cartItem.product.id))
+            cartItem.id = cartItemId
         } else {
             cart.items.add(cartItem)
+            cartItem.totalItemsCost = cartItem.quantity * getProductPrice(cartItem.product.id)
+            cartItemRepository.save(cartItem)
         }
-        cartItem.totalItemsCost = cartItem.quantity * getProductPrice(cartItem.product.id)
         cart.totalSalePrice = handleTotalPrice(cart)
-        cartItem.cart?.id = cartId
-        cartItemRepository.save(cartItem)
-
-        return this.update(cartId,cart)
-
+        return this.update(cartItem.cart.id,cart)
 }
 
-    override fun removeItem(cartId: Long, productId: Long) : Cart{
+    override fun removeItem(cartId: Long, productId: Long, quantity: Int) : Cart{
         val cart = cartRepository.findById(cartId).orElseThrow { NoSuchElementException("Cart not found with id: $cartId") }
-
-        cart.items.removeIf { it.product.id == productId }
-        cart.totalSalePrice = handleTotalPrice(cart)
-        val cartItem = cartItemRepository.findByProductId(productId)
-        for (item in cartItem){
-            cartItemRepository.delete(item)
+        val itemToBeRemoved= cart.items.find { it.product.id == productId }
+        if (itemToBeRemoved!!.quantity < quantity && quantity > 0){
+            itemToBeRemoved.quantity -= quantity
+            itemToBeRemoved.totalItemsCost -= quantity * getProductPrice(productId)
+        }else if (itemToBeRemoved.quantity == quantity) {
+            cart.items.remove(itemToBeRemoved)
         }
+        cart.totalSalePrice = handleTotalPrice(cart)
         return cartRepository.save(cart)
-
     }
 
     override fun handleTotalPrice(cart: Cart): Double {

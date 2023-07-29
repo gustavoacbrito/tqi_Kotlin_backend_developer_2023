@@ -1,5 +1,7 @@
 package com.TQI.jumarket.domain.data.model
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity(name = "TB_CART_ITEM")
@@ -17,7 +19,8 @@ data class CartItem(
     @Column(nullable = false)
     var totalItemsCost: Double,
 
+    @JsonIgnore
     @ManyToOne
-    var cart: Cart? = null
+    var cart: Cart
 )
 
