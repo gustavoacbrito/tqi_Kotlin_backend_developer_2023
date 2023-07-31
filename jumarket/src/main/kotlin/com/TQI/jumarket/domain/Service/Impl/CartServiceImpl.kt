@@ -76,12 +76,15 @@ class CartServiceImpl(
 
     override fun removeItem(cartId: Long, productId: Long, quantity: Int) : Cart{
         val cart = cartRepository.findById(cartId).orElseThrow { NoSuchElementException("Cart not found with id: $cartId") }
-        val itemToBeRemoved= cart.items.find { it.product.id == productId }
-        if (itemToBeRemoved!!.quantity < quantity && quantity > 0){
-            itemToBeRemoved.quantity -= quantity
-            itemToBeRemoved.totalItemsCost -= quantity * getProductPrice(productId)
-        }else if (itemToBeRemoved.quantity == quantity) {
-            cart.items.remove(itemToBeRemoved)
+//        val itemsWithProductId= cartItemRepository.findByProductId(productId)
+        val itemToBeRemoved = cart.items.find { it.product.id == productId }
+        if (itemToBeRemoved != null) {
+            if (itemToBeRemoved.quantity < quantity && quantity > 0) {
+                itemToBeRemoved.quantity -= quantity
+                itemToBeRemoved.totalItemsCost -= quantity * getProductPrice(productId)
+            } else if (itemToBeRemoved.quantity == quantity) {
+                cart.items.remove(itemToBeRemoved)
+            }
         }
         cart.totalSalePrice = handleTotalPrice(cart)
         return cartRepository.save(cart)

@@ -19,7 +19,6 @@ data class CartItem(
     @Column(nullable = false)
     var totalItemsCost: Double,
 
-    @JsonIgnore
     @ManyToOne
     var cart: Cart
 )

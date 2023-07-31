@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CartItemRepository : JpaRepository<CartItem, Long>{
     @Query("SELECT id FROM tb_cart_item WHERE product_id = :productId", nativeQuery = true)
-    fun findByProductId(productId : Long): Long
+    fun findByProductId(productId : Long): List<CartItem>
 }

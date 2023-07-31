@@ -3,6 +3,8 @@ package com.TQI.jumarket.controller
 import com.TQI.jumarket.domain.data.dto.SaleDto
 import com.TQI.jumarket.domain.data.model.Sale
 import com.TQI.jumarket.domain.Service.SaleService
+import com.TQI.jumarket.domain.data.repositories.CartItemRepository
+import com.TQI.jumarket.domain.data.repositories.CartRepository
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -16,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 @RequestMapping("/sale")
 @Tag(name = "Sale Controller", description = "RESTful API for managing the sales")
-class SaleController(private val saleService: SaleService) {
+class SaleController(private val saleService: SaleService, private val cartRepository: CartRepository){
     @GetMapping
     @Operation(
         summary = "Get all sales",
@@ -52,11 +54,11 @@ class SaleController(private val saleService: SaleService) {
             description = "Invalid sale data provided"
         )]
     )
-    fun create(@RequestBody saleDTO: SaleDto): ResponseEntity<SaleDto> {
-        val sale = saleService.create(saleDTO.toEntity())
+    fun create(@RequestBody saleDto: SaleDto): ResponseEntity<SaleDto> {
+        val sale = saleService.create(saleDto.toEntity())
+        val cart = cartRepository.findById(saleDto.cartId)
         val location =
             ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(sale.id).toUri()
-
         return ResponseEntity.created(location).body(SaleDto(sale))
     }
 
