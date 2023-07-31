@@ -4,11 +4,6 @@ A Jumarket API is a RESTful application that provides resources for managing pro
 
 The main idea behind the solution is to start the sale with an empty shopping cart and gradually add items in the quantities required by the customer (and remove them if necessary). As items are added or removed, the costs per item and the total cost of the cart are automatically updated. To complete the sale, a "Sale" object is created, containing information such as the total amount, payment method, and the date and time of the sale.
 
-Some improvements can be implemented to enhance the system further. One such improvement is the introduction of user roles, differentiating between those who can manage categories and products and those who cannot. By incorporating user roles, we can prevent regular users or customers from making modifications to the database. This ensures that only authorized personnel have the capability to perform critical actions, maintaining data integrity and security.
-
-The addition of user roles not only protects the database but also allows for better control and organization within the system. Administrators or privileged users can efficiently manage categories and products while ordinary users can focus on their shopping experience without the risk of inadvertently altering essential data. Implementing these user roles adds an extra layer of protection and empowers businesses to tailor access rights as needed, promoting a more robust and secure shopping platform.
-
-
 ## Technologies Used
 
 - Java
@@ -71,6 +66,10 @@ You can use tools like Postman or cURL to test the API endpoints. Additionally, 
 ## Final Remarks
 
 This API is a solution for managing products, categories, shopping carts, and sales and can be integrated into an e-commerce system to facilitate e-commerce operations.
+
+Some improvements can be implemented to enhance the system further. One such improvement is the introduction of user roles, differentiating between those who can manage categories and products and those who cannot. By incorporating user roles, we can prevent regular users or customers from making modifications to the database. This ensures that only authorized personnel have the capability to perform critical actions, maintaining data integrity and security.
+
+The addition of user roles not only protects the database but also allows for better control and organization within the system. Administrators or privileged users can efficiently manage categories and products while ordinary users can focus on their shopping experience without the risk of inadvertently altering essential data. Implementing these user roles adds an extra layer of protection and empowers businesses to tailor access rights as needed, promoting a more robust and secure shopping platform.
 
 Please note that this is just a brief description of the API, and there are other layers, such as services and repositories, that were not detailed in this README. Make sure to understand the complete application structure before implementing or testing anything.
 
