@@ -6,6 +6,7 @@ import com.TQI.jumarket.domain.Service.CartService
 import com.TQI.jumarket.domain.data.model.CartItem
 import com.TQI.jumarket.domain.data.repositories.CartItemRepository
 import com.TQI.jumarket.domain.data.repositories.ProductRepository
+import com.TQI.jumarket.domain.exceptions.BusinessRulesException
 import com.TQI.jumarket.domain.exceptions.EntityNotFoundException
 import com.TQI.jumarket.domain.exceptions.ErrorMessages
 import org.springframework.stereotype.Service
@@ -75,7 +76,7 @@ class CartServiceImpl(
 }
 
     override fun removeItem(cartItem: CartItem) : Cart{
-        val cart = cartRepository.findById(cartItem.cart.id).orElseThrow { NoSuchElementException("Cart not found with id $cartItem.cart.id") }
+        val cart = cartRepository.findById(cartItem.cart.id).orElseThrow { EntityNotFoundException(ErrorMessages.RECORD_NOT_FOUND) }
         val quantity = cartItem.quantity
         var  itemToUpdate = cart.items.find { it.product.id == cartItem.product.id}
         if (itemToUpdate != null) {
@@ -85,6 +86,8 @@ class CartServiceImpl(
             } else if (itemToUpdate.quantity == quantity) {
                 cart.items.remove(itemToUpdate)
                 cartItemRepository.delete(itemToUpdate)
+            }else {
+                throw BusinessRulesException("Quantity to be removed must be a positive number and less than the product quantity in cart ")
             }
         }
         cart.totalSalePrice = handleTotalPrice(cart)
