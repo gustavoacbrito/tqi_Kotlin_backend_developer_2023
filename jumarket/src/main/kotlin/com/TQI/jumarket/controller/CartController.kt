@@ -93,14 +93,14 @@ class CartController(private val cartService: CartService){
 
     }
 
-    @PatchMapping("/{cartId}/product/{productId}")
+    @PatchMapping("/product/remove")
     @Operation(summary = "Remove from cart", description = "Remove a product from the cart")
     @ApiResponses(value = [
         ApiResponse(responseCode = "204", description = "Product removed to the cart"),
         ApiResponse(responseCode = "404", description = "Product not added")
     ])
-    fun removeItem(@PathVariable cartId: Long, @PathVariable productId: Long, @RequestParam quantity: Int): ResponseEntity<CartViewDto> {
-        val cart = cartService.removeItem(cartId, productId, quantity)
+    fun removeItem(@RequestBody cartItemDto: CartItemDto): ResponseEntity<CartViewDto> {
+        val cart = cartService.removeItem(cartItemDto.toEntity())
         return ResponseEntity.ok(CartViewDto(cart))
     }
 }

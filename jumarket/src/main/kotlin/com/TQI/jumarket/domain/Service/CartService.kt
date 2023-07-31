@@ -6,6 +6,6 @@ import com.TQI.jumarket.domain.data.model.Product
 
 interface CartService : CrudService<Cart, Long> {
     fun handleTotalPrice(cart: Cart): Double
-    fun removeItem(cartId: Long, productId: Long, quantity: Int): Cart
+    fun removeItem(cartItem: CartItem): Cart
     fun addItemToCart(cartItem: CartItem): Cart
 }
