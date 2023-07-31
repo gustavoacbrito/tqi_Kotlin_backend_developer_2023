@@ -3,11 +3,7 @@ package com.TQI.jumarket.domain.data.dto.response
 import com.TQI.jumarket.domain.data.model.CartItem
 
 data class CartItemViewList(
-    var productId: Long,
-    var product: String,
-    var quantity: Int,
-    var unit: String,
-    var totalItemsCost: Double
+    var productId: Long, var product: String, var quantity: Int, var unit: String, var totalItemsCost: Double
 
 ) {
     constructor(model: CartItem) : this(

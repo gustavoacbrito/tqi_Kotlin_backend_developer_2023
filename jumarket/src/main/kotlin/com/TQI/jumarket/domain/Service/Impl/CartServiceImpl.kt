@@ -17,7 +17,7 @@ class CartServiceImpl(
     private val cartRepository: CartRepository,
     private val cartItemRepository: CartItemRepository,
     private val productRepository: ProductRepository
-) : CartService  {
+) : CartService {
 
     @Transactional(readOnly = true)
     override fun findAll(): List<Cart> {
@@ -31,7 +31,7 @@ class CartServiceImpl(
 
     @Transactional
     override fun create(model: Cart): Cart {
-        if (cartRepository.existsById(model.id)){
+        if (cartRepository.existsById(model.id)) {
             throw IllegalArgumentException("Cart with id ${model.id} already exists")
         }
 
@@ -40,7 +40,7 @@ class CartServiceImpl(
 
     @Transactional
     override fun update(id: Long, model: Cart): Cart {
-        if (model.id != id){
+        if (model.id != id) {
             throw IllegalArgumentException("The cart to be updated must be the same")
         }
 
@@ -59,9 +59,10 @@ class CartServiceImpl(
     }
 
     override fun addItemToCart(cartItem: CartItem): Cart {
-        val cart = cartRepository.findById(cartItem.cart.id).orElseThrow { NoSuchElementException("Cart not found with id: $cartItem.cart.id") }
+        val cart = cartRepository.findById(cartItem.cart.id)
+            .orElseThrow { NoSuchElementException("Cart not found with id: $cartItem.cart.id") }
         val existingItem = cart.items.find { it.product.id == cartItem.product.id }
-        if (existingItem != null){
+        if (existingItem != null) {
             val cartItemId = existingItem.id
             existingItem.quantity += cartItem.quantity
             existingItem.totalItemsCost += (cartItem.quantity * getProductPrice(cartItem.product.id))
@@ -72,13 +73,14 @@ class CartServiceImpl(
             cartItemRepository.save(cartItem)
         }
         cart.totalSalePrice = handleTotalPrice(cart)
-        return this.update(cartItem.cart.id,cart)
-}
+        return this.update(cartItem.cart.id, cart)
+    }
 
-    override fun removeItem(cartItem: CartItem) : Cart{
-        val cart = cartRepository.findById(cartItem.cart.id).orElseThrow { EntityNotFoundException(ErrorMessages.RECORD_NOT_FOUND) }
+    override fun removeItem(cartItem: CartItem): Cart {
+        val cart = cartRepository.findById(cartItem.cart.id)
+            .orElseThrow { EntityNotFoundException(ErrorMessages.RECORD_NOT_FOUND) }
         val quantity = cartItem.quantity
-        var  itemToUpdate = cart.items.find { it.product.id == cartItem.product.id}
+        var itemToUpdate = cart.items.find { it.product.id == cartItem.product.id }
         if (itemToUpdate != null) {
             if (itemToUpdate.quantity > quantity && quantity > 0) {
                 itemToUpdate.quantity -= quantity
@@ -86,7 +88,7 @@ class CartServiceImpl(
             } else if (itemToUpdate.quantity == quantity) {
                 cart.items.remove(itemToUpdate)
                 cartItemRepository.delete(itemToUpdate)
-            }else {
+            } else {
                 throw BusinessRulesException("Quantity to be removed must be a positive number and less than the product quantity in cart ")
             }
         }

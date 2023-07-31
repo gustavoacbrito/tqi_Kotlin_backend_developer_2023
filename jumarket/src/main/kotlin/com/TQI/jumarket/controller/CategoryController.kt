@@ -20,9 +20,7 @@ class CategoryController(private val categoryService: CategoryService) {
     @GetMapping
     @Operation(
         summary = "Get all categories",
-        description = "Retrieve a list of all registered categories. " +
-                "This operation returns a complete list of all categories available in the system. " +
-                "Use this endpoint to fetch the entire collection of categories."
+        description = "Retrieve a list of all registered categories. " + "This operation returns a complete list of all categories available in the system. " + "Use this endpoint to fetch the entire collection of categories."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -37,8 +35,7 @@ class CategoryController(private val categoryService: CategoryService) {
     @GetMapping("/{id}")
     @Operation(
         summary = "Get category by id",
-        description = "Retrieve a specific category by its unique ID. " +
-                "The `{id}` path variable should be replaced with the ID of the category to retrieve."
+        description = "Retrieve a specific category by its unique ID. " + "The `{id}` path variable should be replaced with the ID of the category to retrieve."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -52,9 +49,7 @@ class CategoryController(private val categoryService: CategoryService) {
     @GetMapping("/name/{categoryName}")
     @Operation(
         summary = "Find categories by name",
-        description = "Retrieve a list of all registered categories that contain the searched term in their name. " +
-                "The search is case-insensitive, meaning it will match categories regardless of the letter case. " +
-                "The `{categoryName}` path variable should be replaced with the term to search for."
+        description = "Retrieve a list of all registered categories that contain the searched term in their name. " + "The search is case-insensitive, meaning it will match categories regardless of the letter case. " + "The `{categoryName}` path variable should be replaced with the term to search for."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -67,13 +62,11 @@ class CategoryController(private val categoryService: CategoryService) {
 
     @PostMapping
     @Operation(
-        summary = "Create a new category",
-        description = "Create a new category and return the created category's data"
+        summary = "Create a new category", description = "Create a new category and return the created category's data"
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "201", description = "Category created successfully"), ApiResponse(
-            responseCode = "400",
-            description = "Invalid category data provided"
+            responseCode = "400", description = "Invalid category data provided"
         )]
     )
     fun create(@RequestBody categoryDTO: CategoryDto): ResponseEntity<CategoryDto> {
@@ -83,32 +76,32 @@ class CategoryController(private val categoryService: CategoryService) {
 
         return ResponseEntity.created(location).body(CategoryDto(category))
     }
+
     @PatchMapping("/{id}")
     @Operation(
         summary = "Update category",
-        description = "Update an existing category with the provided information. " +
-                "The category will be identified by its unique ID. " +
-                "Only the fields that need to be updated should be provided. " +
-                "If a field is not included in the request, its value will remain unchanged."
+        description = "Update an existing category with the provided information. " + "The category will be identified by its unique ID. " + "Only the fields that need to be updated should be provided. " + "If a field is not included in the request, its value will remain unchanged."
     )
     fun updateCategory(
-        @PathVariable id: Long,
-        @RequestBody @Valid categoryDTO: CategoryDto): ResponseEntity<Category>{
+        @PathVariable id: Long, @RequestBody @Valid categoryDTO: CategoryDto
+    ): ResponseEntity<Category> {
         val category = categoryDTO.toEntity()
 
-        val updatedCategory = categoryService.update(id,category)
+        val updatedCategory = categoryService.update(id, category)
 
         return ResponseEntity.ok(updatedCategory)
     }
+
     @DeleteMapping("/{id}")
     @Operation(
         summary = "Delete category",
-        description = "Delete an existing category by its unique ID. " +
-                "The `{id}` path variable should be replaced with the ID of the category to be deleted."
+        description = "Delete an existing category by its unique ID. " + "The `{id}` path variable should be replaced with the ID of the category to be deleted."
     )
     @ApiResponses(
-        value = [ApiResponse(responseCode = "204", description = "Category deleted successfully"),
-            ApiResponse(responseCode = "404", description = "Category not found")]
+        value = [ApiResponse(responseCode = "204", description = "Category deleted successfully"), ApiResponse(
+            responseCode = "404",
+            description = "Category not found"
+        )]
     )
     fun deleteCategory(@PathVariable id: Long): ResponseEntity<String> {
         val deleteCategory = categoryService.delete(id)

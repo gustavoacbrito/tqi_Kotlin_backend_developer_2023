@@ -1,6 +1,6 @@
 package com.TQI.jumarket.controller
 
-import com.TQI.jumarket.domain.Service.CategoryService
+
 import com.TQI.jumarket.domain.data.dto.ProductDto
 import com.TQI.jumarket.domain.data.model.Product
 import com.TQI.jumarket.domain.Service.ProductService
@@ -21,9 +21,7 @@ class ProductController(private val productService: ProductService) {
     @GetMapping
     @Operation(
         summary = "Get all products",
-        description = "Retrieve a list of all registered products. " +
-                "This operation returns a complete list of all products available in the system. " +
-                "Use this endpoint to fetch the entire collection of products."
+        description = "Retrieve a list of all registered products. " + "This operation returns a complete list of all products available in the system. " + "Use this endpoint to fetch the entire collection of products."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -38,8 +36,7 @@ class ProductController(private val productService: ProductService) {
     @GetMapping("/{id}")
     @Operation(
         summary = "Get product by id",
-        description = "Retrieve a specific product by its unique ID. " +
-                "The `{id}` path variable should be replaced with the ID of the product to retrieve."
+        description = "Retrieve a specific product by its unique ID. " + "The `{id}` path variable should be replaced with the ID of the product to retrieve."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -53,9 +50,7 @@ class ProductController(private val productService: ProductService) {
     @GetMapping("/name/{productName}")
     @Operation(
         summary = "Find products by name",
-        description = "Retrieve a list of all registered products that contain the searched term in their name. " +
-                "The search is case-insensitive, meaning it will match products regardless of the letter case. " +
-                "The `{productName}` path variable should be replaced with the term to search for."
+        description = "Retrieve a list of all registered products that contain the searched term in their name. " + "The search is case-insensitive, meaning it will match products regardless of the letter case. " + "The `{productName}` path variable should be replaced with the term to search for."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -65,12 +60,11 @@ class ProductController(private val productService: ProductService) {
         val productDtos = products.map { ProductDto(it) }
         return ResponseEntity.ok(productDtos)
     }
+
     @GetMapping("/category/{categoryId}")
     @Operation(
         summary = "Find products by category",
-        description = "Retrieve a list of all registered products that belong to the specified category. " +
-                "The search is based on the category ID provided in the path variable {categoryId}. " +
-                "The endpoint will return products that are associated with the given category."
+        description = "Retrieve a list of all registered products that belong to the specified category. " + "The search is based on the category ID provided in the path variable {categoryId}. " + "The endpoint will return products that are associated with the given category."
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "Operation successful")]
@@ -80,21 +74,19 @@ class ProductController(private val productService: ProductService) {
         val productDtos = products.map { ProductDto(it) }
         return ResponseEntity.ok(productDtos)
     }
+
     @PostMapping
     @Operation(
-        summary = "Create a new product",
-        description = "Create a new product and return the created product's data"
+        summary = "Create a new product", description = "Create a new product and return the created product's data"
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "201", description = "Product created successfully"), ApiResponse(
-            responseCode = "400",
-            description = "Invalid product data provided"
+            responseCode = "400", description = "Invalid product data provided"
         )]
     )
     fun create(@RequestBody productDTO: ProductDto): ResponseEntity<ProductDto> {
         val product = productService.create(productDTO.toEntity())
-        val location =
-            ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(product.id).toUri()
+        val location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(product.id).toUri()
 
         return ResponseEntity.created(location).body(ProductDto(product))
     }
@@ -102,14 +94,11 @@ class ProductController(private val productService: ProductService) {
     @PatchMapping("/{id}")
     @Operation(
         summary = "Update product",
-        description = "Update an existing product with the provided information. " +
-                "The product will be identified by its unique ID. " +
-                "Only the fields that need to be updated should be provided. " +
-                "If a field is not included in the request, its value will remain unchanged."
+        description = "Update an existing product with the provided information. " + "The product will be identified by its unique ID. " + "Only the fields that need to be updated should be provided. " + "If a field is not included in the request, its value will remain unchanged."
     )
     fun updateProduct(
-        @PathVariable id: Long,
-        @RequestBody @Valid productDTO: ProductDto): ResponseEntity<Product>{
+        @PathVariable id: Long, @RequestBody @Valid productDTO: ProductDto
+    ): ResponseEntity<Product> {
         val product = productDTO.toEntity()
 
         val updatedProduct = productService.update(id, product)
@@ -120,12 +109,13 @@ class ProductController(private val productService: ProductService) {
     @DeleteMapping("/{id}")
     @Operation(
         summary = "Delete product",
-        description = "Delete an existing product by its unique ID. " +
-                "The `{id}` path variable should be replaced with the ID of the product to be deleted."
+        description = "Delete an existing product by its unique ID. " + "The `{id}` path variable should be replaced with the ID of the product to be deleted."
     )
     @ApiResponses(
-        value = [ApiResponse(responseCode = "204", description = "Product deleted successfully"),
-            ApiResponse(responseCode = "404", description = "Product not found")]
+        value = [ApiResponse(responseCode = "204", description = "Product deleted successfully"), ApiResponse(
+            responseCode = "404",
+            description = "Product not found"
+        )]
     )
     fun deleteProduct(@PathVariable id: Long): ResponseEntity<String> {
         productService.delete(id)

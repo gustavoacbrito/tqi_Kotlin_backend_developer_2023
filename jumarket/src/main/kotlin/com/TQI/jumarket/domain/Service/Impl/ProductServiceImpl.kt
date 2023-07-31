@@ -8,6 +8,7 @@ import com.TQI.jumarket.domain.exceptions.EntityNotFoundException
 import com.TQI.jumarket.domain.exceptions.ErrorMessages
 import org.springframework.stereotype.Service
 import java.util.*
+
 @Service
 class ProductServiceImpl(private val productRepository: ProductRepository) : ProductService {
     override fun findAll(): List<Product> {
@@ -50,6 +51,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository) : Pro
             throw EntityNotFoundException(ErrorMessages.RECORD_NOT_FOUND)
         }
     }
+
     override fun listProductByName(productName: String): List<Product> {
         val products = productRepository.findByNameContainingIgnoreCase(productName)
         if (products.isEmpty()) {

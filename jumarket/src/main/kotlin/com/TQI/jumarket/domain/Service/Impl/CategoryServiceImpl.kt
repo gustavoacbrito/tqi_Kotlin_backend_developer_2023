@@ -29,7 +29,7 @@ class CategoryServiceImpl(private val categoryRepository: CategoryRepository) : 
         if (categoryRepository.existsCategoryByCategoryName(model.categoryName)) {
             throw BusinessRulesException(ErrorMessages.CATEGORY_ALREADY_EXISTS)
         } else if (categoryRepository.existsById(model.id)) {
-                throw BusinessRulesException(ErrorMessages.ID_ALREADY_EXISTS)
+            throw BusinessRulesException(ErrorMessages.ID_ALREADY_EXISTS)
         }
         return categoryRepository.save(model)
     }

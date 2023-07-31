@@ -1,16 +1,15 @@
 package com.TQI.jumarket.domain.Service.Impl
 
 
+import com.TQI.jumarket.domain.Service.SaleService
 import com.TQI.jumarket.domain.data.model.Sale
 import com.TQI.jumarket.domain.data.repositories.SaleRepository
-import com.TQI.jumarket.domain.Service.SaleService
-import com.TQI.jumarket.domain.data.model.Product
 import com.TQI.jumarket.domain.exceptions.BusinessRulesException
 import com.TQI.jumarket.domain.exceptions.EntityNotFoundException
 import com.TQI.jumarket.domain.exceptions.ErrorMessages
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.NoSuchElementException
+
 @Service
 class SaleServiceImpl(private val saleRepository: SaleRepository) : SaleService {
     override fun findAll(): List<Sale> {
